@@ -3,8 +3,11 @@
 This script automatically switches the laptop display refresh rate when AC power
 is connected or disconnected.
 
-- On **AC** → sets the maximum refresh rate  
-- On **Battery** → sets the refreshrate
+- On **AC** → sets the maximum refresh rate and turns panel overdrive on  
+- On **Battery** → sets the refresh rate and turns panel overdrive off
+
+Overdrive is controlled with `asusctl armoury set panel_overdrive`. If `asusctl`
+is not installed, that step is skipped.
 
 ## ⚠️ Important information
 
@@ -23,6 +26,7 @@ state changes. The AC adapter is detected automatically.
 - `kscreen-doctor` (part of KDE Plasma)  
 - `systemd --user` (default on Fedora)
 - `udevadm` (part of systemd)
+- `asusctl` (optional, for panel overdrive on ASUS laptops)
 
 ## Installation
 

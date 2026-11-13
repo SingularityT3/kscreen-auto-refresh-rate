@@ -14,11 +14,20 @@ on_ac() {
     return 1
 }
 
+# Panel overdrive via asusctl: on when plugged in, off on battery.
+# Skipped silently if asusctl is missing or the attribute is unsupported.
+set_overdrive() {
+    command -v asusctl >/dev/null 2>&1 || return 0
+    asusctl armoury set panel_overdrive "$1" >/dev/null 2>&1 || true
+}
+
 apply() {
     if on_ac; then
         kscreen-doctor output.$OUTPUT.mode.$MODE_AC
+        set_overdrive 1
     else
         kscreen-doctor output.$OUTPUT.mode.$MODE_BAT
+        set_overdrive 0
     fi
 }
 
