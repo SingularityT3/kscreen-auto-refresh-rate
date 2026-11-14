@@ -1,5 +1,5 @@
 #!/bin/bash
-OUTPUT="eDP-1" # Output name (you can find it using `kscreen-doctor -o`)
+OUTPUT=""      # Output name (see `kscreen-doctor -o`); empty = autodetect the internal eDP panel
 MODE_AC="1"    # ID for mode when on AC power
 MODE_BAT="2"   # ID for mode when on battery power
 
@@ -21,7 +21,14 @@ set_overdrive() {
     asusctl armoury set panel_overdrive "$1" >/dev/null 2>&1 || true
 }
 
+# Connector names can change across kernel/driver updates (eDP-1 -> eDP-2),
+# so resolve the internal panel at apply time when OUTPUT is not set.
 apply() {
+    local OUTPUT="$OUTPUT"
+    if [ -z "$OUTPUT" ]; then
+        OUTPUT=$(kscreen-doctor -o 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' |
+                 awk '$1=="Output:" && $3 ~ /^eDP/ {print $3; exit}')
+    fi
     if on_ac; then
         kscreen-doctor output.$OUTPUT.mode.$MODE_AC
         set_overdrive 1
